@@ -1,197 +1,189 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Biblioteca do André</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.1/mammoth.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-        }
-        .book-cover {
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid #e5e7eb;
-            background-color: #fff;
-        }
-        .book-cover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-        }
-        .book-cover img {
-            width: 100%;
-            height: auto;
-            aspect-ratio: 2 / 3;
-            object-fit: cover;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .book-cover .title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            padding: 0.5rem;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .html-output-content {
-            padding: 2rem;
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            max-width: 720px;
-            margin: auto;
-            font-size: 1.1rem;
-            line-height: 1.75;
-            transition: font-size 0.3s ease;
-        }
-        .html-output-content img {
-            max-width: 100%;
-            border-radius: 0.375rem;
-            margin: 0.5em 0;
-        }
-        .html-output-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1em 0;
-        }
-        .html-output-content th,
-        .html-output-content td {
-            border: 1px solid #e5e7eb;
-            padding: 0.5em;
-            text-align: left;
-        }
-        .html-output-content th {
-            background-color: #f9fafb;
-        }
-        .html-output-content p {
-            margin-bottom: 1em;
-        }
-        .html-output-content h1,
-        .html-output-content h2,
-        .html-output-content h3 {
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
-            font-weight: 600;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblioteca do André</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.1/mammoth.browser.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+    }
+    .book-cover {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid #e5e7eb;
+      background-color: #fff;
+    }
+    .book-cover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+    .book-cover img {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      object-fit: cover;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .book-cover .title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    .html-output-content {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 768px;
+      width: 100%;
+      font-size: 1.1rem;
+      line-height: 1.75;
+      margin: auto;
+      padding: 2rem;
+    }
+    .page-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+  </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
-    <div class="w-full max-w-4xl bg-white p-6 sm:p-8 rounded-xl shadow-2xl">
-        <header class="mb-6 sm:mb-8 text-center">
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Biblioteca do André</h1>
-            <p class="text-sm text-gray-600 mt-2">Clique na capa para iniciar a leitura.</p>
-        </header>
+  <div class="w-full max-w-4xl bg-white p-6 sm:p-8 rounded-xl shadow-2xl">
+    <header class="mb-6 sm:mb-8 text-center">
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Biblioteca do André</h1>
+      <p class="text-sm text-gray-600 mt-2">Clique na capa para iniciar a leitura.</p>
+    </header>
 
-        <div id="bookShelf" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-8"></div>
+    <div id="bookShelf" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-8"></div>
 
-        <div id="readingView" class="mt-4">
-            <div id="messageArea" class="mb-4 text-center min-h-[24px]"></div>
-            <div id="htmlOutput" class="html-output-content min-h-[300px] border border-gray-200 rounded-lg">
-                <p class="text-gray-400">Selecione um livro da estante para ler.</p>
-            </div>
+    <div id="readingView" class="mt-4 w-full">
+      <div id="messageArea" class="mb-4 text-center min-h-[24px]"></div>
+      <div class="html-output-content">
+        <div id="pagesContainer"></div>
+        <div class="page-controls">
+          <button onclick="prevPage()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">◀ Página Anterior</button>
+          <span id="pageIndicator" class="text-sm text-gray-700 self-center">Página 0</span>
+          <button onclick="nextPage()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Próxima Página ▶</button>
         </div>
-
-        <footer class="mt-6 sm:mt-8 text-center">
-            <p class="text-xs text-gray-500">
-                Utiliza <a href="https://github.com/mwilliamson/mammoth.js" target="_blank" class="text-indigo-600 hover:underline">mammoth.js</a> para conversão de .docx.
-            </p>
-        </footer>
+      </div>
     </div>
 
-    <!-- Botão Flutuante de Zoom -->
-    <div id="zoomControls" class="fixed right-4 bottom-24 flex flex-col space-y-2 z-50">
-      <button onclick="zoomIn()" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg text-xl">+</button>
-      <button onclick="zoomOut()" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg text-xl">−</button>
-    </div>
+    <footer class="mt-6 sm:mt-8 text-center">
+      <p class="text-xs text-gray-500">
+        Utiliza <a href="https://github.com/mwilliamson/mammoth.js" target="_blank" class="text-indigo-600 hover:underline">mammoth.js</a> para conversão de .docx.
+      </p>
+    </footer>
+  </div>
 
-    <script>
-        const bookData = [
-            {
-                id: 'curso-alta-performance',
-                title: 'Curso de Alta Performance',
-                coverImageUrl: 'capas/curso_alta_performance_capa.png',
-                docxUrl: 'livros/Curso_Alta_Performance.docx'
-            }
-        ];
+  <script>
+    const bookData = [
+      {
+        id: 'curso-alta-performance',
+        title: 'Curso de Alta Performance',
+        coverImageUrl: 'capas/curso_alta_performance_capa.png',
+        docxUrl: 'livros/Curso_Alta_Performance.docx'
+      }
+    ];
 
-        const bookShelfDiv = document.getElementById('bookShelf');
-        const htmlOutputDiv = document.getElementById('htmlOutput');
-        const messageArea = document.getElementById('messageArea');
+    const bookShelfDiv = document.getElementById('bookShelf');
+    const messageArea = document.getElementById('messageArea');
+    const pagesContainer = document.getElementById('pagesContainer');
+    const pageIndicator = document.getElementById('pageIndicator');
 
-        function renderBookShelf() {
-            bookShelfDiv.innerHTML = '';
-            bookData.forEach(book => {
-                const bookElement = document.createElement('div');
-                bookElement.className = 'book-cover rounded-lg overflow-hidden shadow-md';
-                bookElement.innerHTML = `
-                    <img src="${book.coverImageUrl}" alt="Capa do livro ${book.title}" onerror="this.onerror=null;this.src='https://placehold.co/200x300/cccccc/FFFFFF?text=Capa+Indisponível';">
-                    <p class="title">${book.title}</p>
-                `;
-                bookElement.addEventListener('click', () => loadBook(book));
-                bookShelfDiv.appendChild(bookElement);
-            });
+    let currentPage = 0;
+    let totalPages = 0;
+
+    function renderBookShelf() {
+      bookShelfDiv.innerHTML = '';
+      bookData.forEach(book => {
+        const bookElement = document.createElement('div');
+        bookElement.className = 'book-cover rounded-lg overflow-hidden shadow-md';
+        bookElement.innerHTML = `
+          <img src="${book.coverImageUrl}" alt="Capa do livro ${book.title}">
+          <p class="title">${book.title}</p>
+        `;
+        bookElement.addEventListener('click', () => loadBook(book));
+        bookShelfDiv.appendChild(bookElement);
+      });
+    }
+
+    async function loadBook(book) {
+      displayMessage(\`Carregando "\${book.title}"...\`, 'loading');
+      pagesContainer.innerHTML = '';
+
+      try {
+        const response = await fetch(book.docxUrl);
+        if (!response.ok) throw new Error(\`Erro: \${response.status}\`);
+        const arrayBuffer = await response.arrayBuffer();
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+
+        const tempContainer = document.createElement('div');
+        tempContainer.innerHTML = result.value;
+        const elements = Array.from(tempContainer.children);
+        const elementsPerPage = 6;
+
+        const pages = [];
+        for (let i = 0; i < elements.length; i += elementsPerPage) {
+          const page = document.createElement('div');
+          page.classList.add('page');
+          for (let j = i; j < i + elementsPerPage && j < elements.length; j++) {
+            page.appendChild(elements[j].cloneNode(true));
+          }
+          pages.push(page);
         }
 
-        async function loadBook(book) {
-            displayMessage(`Carregando "${book.title}"...`, 'loading');
-            htmlOutputDiv.innerHTML = '<p class="text-gray-400">Processando o documento...</p>';
+        pages.forEach(p => pagesContainer.appendChild(p));
+        totalPages = pages.length;
+        currentPage = 0;
+        showPage(currentPage);
 
-            try {
-                const response = await fetch(book.docxUrl);
-                if (!response.ok) throw new Error(`Erro: ${response.status}`);
-                const arrayBuffer = await response.arrayBuffer();
-                const result = await mammoth.convertToHtml({ arrayBuffer });
-                htmlOutputDiv.innerHTML = result.value;
+        displayMessage(\`"\${book.title}" carregado com sucesso!\`, 'success');
+        document.getElementById('readingView').scrollIntoView({ behavior: 'smooth' });
+      } catch (err) {
+        displayMessage(\`Erro ao carregar o livro: \${err.message}\`, 'error');
+      }
+    }
 
-                if (result.messages && result.messages.length > 0) {
-                    const warnings = result.messages.map(msg => `<p class="text-xs text-yellow-600">${msg.message}</p>`).join('');
-                    displayMessage(`"${book.title}" carregado com avisos:<br>${warnings}`, 'warning', false);
-                } else {
-                    displayMessage(`"${book.title}" carregado com sucesso!`, 'success');
-                }
+    function showPage(index) {
+      const allPages = document.querySelectorAll('.page');
+      allPages.forEach(p => p.classList.remove('active'));
+      if (allPages[index]) {
+        allPages[index].classList.add('active');
+        pageIndicator.textContent = \`Página \${index + 1} de \${totalPages}\`;
+      }
+    }
 
-                document.getElementById('readingView').scrollIntoView({ behavior: 'smooth' });
-            } catch (err) {
-                displayMessage(`Erro ao carregar o livro: ${err.message}`, 'error');
-                htmlOutputDiv.innerHTML = `<p class="text-red-500">Erro ao carregar o livro. Verifique o nome e local dos arquivos.</p>`;
-            }
-        }
+    function nextPage() {
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+        showPage(currentPage);
+      }
+    }
 
-        function displayMessage(message, type, autoClear = true) {
-            messageArea.innerHTML = '';
-            const msg = document.createElement('p');
-            msg.innerHTML = message;
-            msg.className = {
-                loading: 'text-blue-600 animate-pulse',
-                error: 'text-red-600 font-semibold',
-                success: 'text-green-600 font-semibold',
-                warning: 'text-yellow-700'
-            }[type] || 'text-gray-700';
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        showPage(currentPage);
+      }
+    }
 
-            messageArea.appendChild(msg);
-            if (autoClear && ['success', 'error'].includes(type)) {
-                setTimeout(() => { messageArea.innerHTML = ''; }, 7000);
-            }
-        }
+    function displayMessage(message, type) {
+      messageArea.innerHTML = '<p class="text-sm text-gray-600">' + message + '</p>';
+    }
 
-        let fontSize = 1.1;
-        function zoomIn() {
-            fontSize += 0.1;
-            document.querySelector('.html-output-content').style.fontSize = fontSize + 'rem';
-        }
-        function zoomOut() {
-            fontSize = Math.max(0.8, fontSize - 0.1);
-            document.querySelector('.html-output-content').style.fontSize = fontSize + 'rem';
-        }
-
-        document.addEventListener('DOMContentLoaded', renderBookShelf);
-    </script>
+    document.addEventListener('DOMContentLoaded', renderBookShelf);
+  </script>
 </body>
 </html>
