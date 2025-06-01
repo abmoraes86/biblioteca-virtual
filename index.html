@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leitor de Livros DOCX</title>
+    <title>Leitor de Livros DOCX Paginado</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@0.292.0/dist/umd/lucide.min.js"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5; /* Light gray background */
+            background-color: #f0f2f5;
+            scroll-behavior: smooth;
         }
         .book-shelf-item {
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
@@ -20,93 +22,67 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        .reader-content {
-            background-color: #fff; /* White background for reader */
-            border: 1px solid #e2e8f0; /* Light border */
+
+        /* Reader Section Styling */
+        #readerSection {
+            width: 100%; /* Ocupa a largura total */
+        }
+
+        #readerContentWrapper {
+            background-color: #fff;
             border-radius: 0.5rem;
-            padding: 1.5rem;
-            line-height: 1.8;
-            overflow-y: auto;
-            height: 60vh; /* Default height, can be adjusted */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 1rem; /* Espaçamento interno */
+        }
+        
+        .reader-page-content {
+            min-height: 65vh; /* Altura mínima para o conteúdo da página */
+            max-height: 65vh; /* Altura máxima, com rolagem interna se necessário */
+            overflow-y: auto; /* Permite rolagem vertical dentro da página */
+            line-height: 1.7;
+            padding: 0.5rem; /* Espaçamento interno da página */
             transition: font-size 0.3s ease;
+            /* Evitar quebras de coluna dentro de parágrafos ou elementos justapostos */
+            -webkit-column-break-inside: avoid;
+                      page-break-inside: avoid;
+                           break-inside: avoid-column;
         }
-        /* Page simulation using columns for wider screens */
-        @media (min-width: 768px) {
-            .reader-content.paginated {
-                column-width: 300px; /* Adjust column width as needed */
-                column-gap: 2rem;
-                height: 70vh;
-            }
+
+        .reader-page-content p { 
+            margin-bottom: 1em; 
+            /* Tentar evitar quebras dentro de parágrafos, se possível com a altura da página */
+            break-inside: avoid-page; 
         }
-        .reader-content p {
-            margin-bottom: 1em;
-        }
-        .reader-content h1, .reader-content h2, .reader-content h3, .reader-content h4, .reader-content h5, .reader-content h6 {
-            margin-top: 1.5em;
-            margin-bottom: 0.8em;
+        .reader-page-content h1, .reader-page-content h2, .reader-page-content h3, .reader-page-content h4, .reader-page-content h5, .reader-page-content h6 {
+            margin-top: 1.2em;
+            margin-bottom: 0.6em;
             line-height: 1.3;
             font-weight: 600;
+            /* Títulos devem idealmente começar no topo de uma nova "página" ou não serem quebrados */
+            break-before: auto; /* ou page, dependendo do efeito desejado com a lógica de paginação JS */
+            break-after: avoid-page;
         }
-        .reader-content h1 { font-size: 2em; }
-        .reader-content h2 { font-size: 1.75em; }
-        .reader-content h3 { font-size: 1.5em; }
-
-        /* Custom scrollbar for webkit browsers */
-        .reader-content::-webkit-scrollbar {
-            width: 8px;
-        }
-        .reader-content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .reader-content::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        .reader-content::-webkit-scrollbar-thumb:hover {
-            background: #555;
+        .reader-page-content h1 { font-size: 1.8em; }
+        .reader-page-content h2 { font-size: 1.6em; }
+        .reader-page-content h3 { font-size: 1.4em; }
+        
+        .reader-page-content img, .reader-page-content table, .reader-page-content ul, .reader-page-content ol, .reader-page-content pre {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1em auto;
+            border-radius: 0.25rem;
+            break-inside: avoid-page; /* Evitar quebrar esses elementos grandes */
         }
 
-        /* Message Box Styling */
-        .message-box-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .message-box-overlay.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-        .message-box-content {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 90%;
-            width: 400px;
-        }
-        .message-box-content h3 {
-            margin-top: 0;
-            margin-bottom: 1rem;
-            font-size: 1.25rem;
-            color: #333;
-        }
-        .message-box-content p {
-            margin-bottom: 1.5rem;
-            color: #555;
-        }
-        .message-box-button {
+        /* Custom scrollbar for page content */
+        .reader-page-content::-webkit-scrollbar { width: 8px; }
+        .reader-page-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .reader-page-content::-webkit-scrollbar-thumb { background: #aaa; border-radius: 10px; }
+        .reader-page-content::-webkit-scrollbar-thumb:hover { background: #777; }
+
+        /* Navigation Buttons */
+        .nav-button {
             background-color: #3b82f6; /* blue-500 */
             color: white;
             padding: 0.5rem 1rem;
@@ -114,25 +90,45 @@
             border: none;
             cursor: pointer;
             transition: background-color 0.2s;
+            font-weight: 500;
         }
-        .message-box-button:hover {
-            background-color: #2563eb; /* blue-600 */
+        .nav-button:hover { background-color: #2563eb; /* blue-600 */ }
+        .nav-button:disabled {
+            background-color: #9ca3af; /* gray-400 */
+            cursor: not-allowed;
         }
+        #pageIndicator {
+            font-size: 0.9rem;
+            color: #4b5563; /* gray-600 */
+        }
+
+
+        /* Message Box Styling (remains the same) */
+        .message-box-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); display: flex;
+            justify-content: center; align-items: center; z-index: 1000;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .message-box-overlay.visible { opacity: 1; visibility: visible; }
+        .message-box-content {
+            background-color: white; padding: 2rem; border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); text-align: center;
+            max-width: 90%; width: 400px;
+        }
+        .message-box-content h3 { margin-top: 0; margin-bottom: 1rem; font-size: 1.25rem; color: #333; }
+        .message-box-content p { margin-bottom: 1.5rem; color: #555; }
+        .message-box-button {
+            background-color: #3b82f6; color: white; padding: 0.5rem 1rem;
+            border-radius: 0.375rem; border: none; cursor: pointer; transition: background-color 0.2s;
+        }
+        .message-box-button:hover { background-color: #2563eb; }
 
         .loader {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid #3498db; /* Blue */
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+            border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%;
+            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     </style>
 </head>
@@ -140,7 +136,7 @@
 
     <header class="text-center mb-8">
         <h1 class="text-3xl md:text-4xl font-bold text-blue-600">Meu Leitor de Livros Digital</h1>
-        <p class="text-slate-600 mt-2">Selecione um livro da estante para começar a ler!</p>
+        <p class="text-slate-600 mt-2">Selecione um livro da estante para uma experiência de leitura paginada!</p>
     </header>
 
     <section id="bookShelfSection" class="mb-10">
@@ -160,17 +156,27 @@
                 <button id="zoomInButton" title="Aumentar Zoom" class="p-2 bg-slate-200 hover:bg-slate-300 rounded-md transition">
                     <i data-lucide="zoom-in" class="w-5 h-5"></i>
                 </button>
-                 <button id="togglePaginationButton" title="Alternar Paginação" class="p-2 bg-slate-200 hover:bg-slate-300 rounded-md transition">
-                    <i data-lucide="book-open" class="w-5 h-5"></i>
-                </button>
             </div>
         </div>
         <div id="readerContentLoading" class="hidden text-center py-10">
             <div class="loader"></div>
             <p class="text-slate-500 mt-2">Carregando conteúdo do livro...</p>
         </div>
-        <div id="readerContent" class="reader-content shadow-lg">
-            <p class="text-slate-400 text-center">Selecione um livro da sua estante para ler.</p>
+        
+        <div id="readerContentWrapper" class="w-full">
+            <div id="readerPageContent" class="reader-page-content">
+                 <p id="readerPlaceholder" class="text-slate-400 text-center">Selecione um livro da sua estante para ler.</p>
+            </div>
+        </div>
+
+        <div id="readerNavigation" class="flex justify-between items-center mt-4">
+            <button id="prevPageButton" class="nav-button" disabled>
+                <i data-lucide="arrow-left" class="inline-block mr-1 w-4 h-4"></i> Anterior
+            </button>
+            <span id="pageIndicator">Página - de -</span>
+            <button id="nextPageButton" class="nav-button" disabled>
+                Próxima <i data-lucide="arrow-right" class="inline-block ml-1 w-4 h-4"></i>
+            </button>
         </div>
     </section>
 
@@ -183,69 +189,62 @@
     </div>
 
     <script>
-        // Variáveis globais
         const bookShelf = document.getElementById('bookShelf');
         const readerSection = document.getElementById('readerSection'); 
-        const readerContent = document.getElementById('readerContent'); 
         const readerContentLoading = document.getElementById('readerContentLoading');
         const currentBookTitle = document.getElementById('currentBookTitle');
         const zoomInButton = document.getElementById('zoomInButton');
         const zoomOutButton = document.getElementById('zoomOutButton');
-        const togglePaginationButton = document.getElementById('togglePaginationButton');
         const emptyShelfMessage = document.getElementById('emptyShelfMessage');
+        
+        const readerPageContent = document.getElementById('readerPageContent');
+        // const readerPlaceholder = document.getElementById('readerPlaceholder'); // No longer directly targeted for innerHTML
+        const prevPageButton = document.getElementById('prevPageButton');
+        const nextPageButton = document.getElementById('nextPageButton');
+        const pageIndicator = document.getElementById('pageIndicator');
 
         const messageBox = document.getElementById('messageBox');
         const messageBoxTitle = document.getElementById('messageBoxTitle');
         const messageBoxText = document.getElementById('messageBoxText');
         const messageBoxOkButton = document.getElementById('messageBoxOkButton');
 
-        // --- Livros Pré-definidos ---
-        // Adapte os URLs para os seus arquivos no GitHub Pages
         const books = [
             {
-                id: 'curso-alta-performance', // ID conforme seu exemplo
-                name: 'Curso de Alta Performance.docx', // Nome do arquivo conforme seu exemplo
-                fileUrl: 'https://abmoraes86.github.io/biblioteca-virtual/livros/Curso_Alta_Performance.docx', // URL do DOCX no GitHub Pages
-                coverUrl: 'https://abmoraes86.github.io/biblioteca-virtual/capas/curso_alta_performance_capa.png' // URL da Capa no GitHub Pages
+                id: 'curso-alta-performance', 
+                name: 'Curso de Alta Performance.docx', 
+                fileUrl: 'https://abmoraes86.github.io/biblioteca-virtual/livros/Curso_Alta_Performance.docx', 
+                coverUrl: 'https://abmoraes86.github.io/biblioteca-virtual/capas/curso_alta_performance_capa.png' 
             },
             {
-                id: 'livro-exemplo-2', // Mantenha IDs únicos
-                name: 'Em breve.docx', // Nome do seu segundo livro
-                // IMPORTANTE: Substitua pelo URL real do seu segundo arquivo .docx
+                id: 'livro-exemplo-2', 
+                name: 'Em breve.docx', 
                 fileUrl: 'https://SEU_USUARIO_GITHUB.github.io/SEU_REPOSITORIO/caminho/para/seu_livro2.docx', 
-                // IMPORTANTE: Substitua pelo URL real da capa do seu segundo livro
                 coverUrl: `https://SEU_USUARIO_GITHUB.github.io/SEU_REPOSITORIO/caminho/para/sua_capa2.png` 
             },
             {
                 id: 'livro-exemplo-3',
-                name: 'Em breve.docx', // Nome do seu terceiro livro
-                // IMPORTANTE: Substitua pelo URL real do seu terceiro arquivo .docx
+                name: 'Em breve.docx', 
                 fileUrl: 'https://SEU_USUARIO_GITHUB.github.io/SEU_REPOSITORIO/caminho/para/seu_livro3.docx',
-                // IMPORTANTE: Substitua pelo URL real da capa do seu terceiro livro
                 coverUrl: `https://SEU_USUARIO_GITHUB.github.io/SEU_REPOSITORIO/caminho/para/sua_capa3.png`
             }
-            // Adicione mais livros aqui conforme necessário, seguindo o mesmo padrão
         ];
 
         let currentZoomLevel = 100; 
         const ZOOM_STEP = 10; 
-        const MIN_ZOOM = 50;
-        const MAX_ZOOM = 200;
-        let isPaginated = false;
+        const MIN_ZOOM = 70;
+        const MAX_ZOOM = 150;
+        
+        let bookPages = []; 
+        let currentPageIndex = 0;
+        // Heurística: Número aproximado de elementos de bloco por página. Ajuste conforme necessário.
+        const ELEMENTS_PER_PAGE_TARGET = 7; // Tente agrupar cerca de 7 parágrafos/títulos/imagens por página
 
-
-        // --- Funções da Caixa de Mensagem ---
         function showMessage(title, text) {
             messageBoxTitle.textContent = title;
             messageBoxText.textContent = text;
             messageBox.classList.add('visible');
         }
-
-        messageBoxOkButton.addEventListener('click', () => {
-            messageBox.classList.remove('visible');
-        });
-
-        // --- Lógica da Aplicação ---
+        messageBoxOkButton.addEventListener('click', () => messageBox.classList.remove('visible'));
 
         function renderBookShelf() {
             bookShelf.innerHTML = ''; 
@@ -255,22 +254,17 @@
                 return;
             }
             
-            // Verifica se há pelo menos um livro com URL válida (não é o placeholder genérico)
             const validBooks = books.filter(book => 
-                book.fileUrl && 
-                !book.fileUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io') &&
-                book.coverUrl &&
-                !book.coverUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io')
+                book.fileUrl && !book.fileUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io') &&
+                book.coverUrl && !book.coverUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io')
             );
 
             if (validBooks.length === 0 && books.length > 0) { 
                  emptyShelfMessage.textContent = "Configure os URLs dos arquivos .docx e capas para exibir os livros.";
                  emptyShelfMessage.classList.remove('hidden');
-                 console.warn("Nenhum livro com URL válida encontrado. Edite o array 'books' no script com os URLs corretos do GitHub Pages.");
             } else if (books.length > 0) { 
                 emptyShelfMessage.classList.add('hidden');
             }
-
 
             books.forEach(book => { 
                 const bookElement = document.createElement('div');
@@ -278,31 +272,25 @@
                 bookElement.setAttribute('data-book-id', book.id);
 
                 const img = document.createElement('img');
-                img.src = book.coverUrl; // Usa o coverUrl definido
+                img.src = book.coverUrl; 
                 img.alt = `Capa de ${book.name}`;
                 img.classList.add('w-full', 'h-auto', 'object-cover', 'rounded-md', 'mb-2', 'max-w-[150px]', 'aspect-[2/3]');
-                img.onerror = function() { // Fallback se a imagem da capa falhar
+                img.onerror = function() { 
                     this.src = `https://placehold.co/200x300/cccccc/333333?text=Capa+Indispon%C3%ADvel&font=inter`;
-                    console.warn(`Falha ao carregar capa: ${book.coverUrl}`);
                 };
-
                 const title = document.createElement('p');
                 title.textContent = book.name.length > 25 ? book.name.substring(0, 22) + '...' : book.name;
                 title.classList.add('text-sm', 'font-medium', 'text-slate-700', 'mt-1');
                 title.title = book.name;
-
                 bookElement.appendChild(img);
                 bookElement.appendChild(title);
 
-                // Verifica se o URL é válido antes de adicionar o event listener
                 if (book.fileUrl && !book.fileUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io')) {
                     bookElement.addEventListener('click', () => loadBookIntoReader(book.id));
                 } else {
                     bookElement.style.cursor = 'not-allowed';
                     bookElement.title = "URL do arquivo .docx não configurada corretamente.";
-                    bookElement.addEventListener('click', () => {
-                        showMessage('Livro Indisponível', `O arquivo para "${book.name}" não está configurado corretamente. Por favor, adicione um URL válido do GitHub Pages no código.`);
-                    });
+                    bookElement.addEventListener('click', () => showMessage('Livro Indisponível', `O arquivo para "${book.name}" não está configurado corretamente.`));
                 }
                 bookShelf.appendChild(bookElement);
             });
@@ -314,48 +302,178 @@
                 showMessage('Erro', 'Livro não encontrado.');
                 return;
             }
-            // Verifica novamente se o URL é válido
             if (!book.fileUrl || book.fileUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io')) {
                 showMessage('Erro', `URL do arquivo para "${book.name}" não configurada corretamente.`);
-                readerContent.innerHTML = '<p class="text-slate-400 text-center">Selecione um livro da sua estante para ler.</p>';
+                readerPageContent.innerHTML = '<p id="readerPlaceholder" class="text-slate-400 text-center">Selecione um livro da sua estante para ler.</p>';
                 currentBookTitle.textContent = "Leitor"; 
+                resetPagination();
                 return;
             }
 
             currentBookTitle.textContent = book.name;
-            readerContent.innerHTML = ''; 
-            readerContentLoading.classList.remove('hidden'); 
+            readerContentLoading.classList.remove('hidden');
+            readerPageContent.innerHTML = ''; 
+            resetPagination();
 
             try {
                 const response = await fetch(book.fileUrl);
-                if (!response.ok) {
-                    throw new Error(`Falha ao buscar o arquivo: ${response.status} ${response.statusText} em ${book.fileUrl}`);
-                }
+                if (!response.ok) throw new Error(`Falha ao buscar o arquivo: ${response.status} ${response.statusText}`);
                 const arrayBuffer = await response.arrayBuffer();
-                const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+                const mammothResult = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
                 
-                readerContent.innerHTML = result.value; 
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = mammothResult.value;
+
+                bookPages = []; 
+                let contentContainer = tempDiv;
+                if (tempDiv.children.length === 1 && tempDiv.firstElementChild.tagName === 'DIV') {
+                    if (tempDiv.firstElementChild.children.length > 0) {
+                       contentContainer = tempDiv.firstElementChild;
+                    }
+                }
+                const childNodes = Array.from(contentContainer.childNodes);
+
+                if (childNodes.length > 0) {
+                    let currentPageHtmlBuffer = '';
+                    let elementCountInCurrentPage = 0;
+                    const significantNodeTags = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'IMG', 'TABLE', 'UL', 'OL', 'PRE', 'HR'];
+
+                    childNodes.forEach((node, index) => {
+                        let nodeHtml = '';
+                        let isSignificant = false;
+
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            nodeHtml = node.outerHTML;
+                            if (significantNodeTags.includes(node.tagName)) {
+                                isSignificant = true;
+                            } else if (node.textContent.trim() !== '') { // Catch other elements with text
+                                isSignificant = true;
+                            }
+                        } else if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+                            nodeHtml = `<p>${node.textContent.trim()}</p>`; // Wrap loose text in paragraphs
+                            isSignificant = true;
+                        }
+
+                        if (isSignificant) {
+                            currentPageHtmlBuffer += nodeHtml;
+                            elementCountInCurrentPage++;
+                        }
+
+                        // Check if page should be finalized
+                        // Finalize if target element count is reached OR it's the last node
+                        if ((isSignificant && elementCountInCurrentPage >= ELEMENTS_PER_PAGE_TARGET) || index === childNodes.length - 1) {
+                            if (currentPageHtmlBuffer.trim() !== '') {
+                                bookPages.push(currentPageHtmlBuffer);
+                                currentPageHtmlBuffer = '';
+                                elementCountInCurrentPage = 0;
+                            }
+                        }
+                    });
+                    // Add any remaining content in the buffer as the last page
+                    if (currentPageHtmlBuffer.trim() !== '') {
+                        bookPages.push(currentPageHtmlBuffer);
+                    }
+
+                } else if (contentContainer.innerHTML.trim() !== '') { // Fallback for content not having childNodes but having innerHTML
+                    bookPages.push(contentContainer.innerHTML);
+                }
+
+
+                if (bookPages.length === 0) { 
+                    if (mammothResult.value.trim() !== '') {
+                        console.warn("Divisão de páginas resultou em 0 páginas. Usando conteúdo completo como uma página.");
+                        bookPages.push(mammothResult.value); // Fallback: use the whole content if splitting fails
+                    } else {
+                        bookPages.push('<p>Conteúdo do livro está vazio ou não pôde ser processado.</p>');
+                    }
+                }
+                
+                readerContentLoading.classList.add('hidden');
+                
+                if (bookPages.length > 0) {
+                    currentPageIndex = 0;
+                    renderCurrentPage();
+                } else {
+                    readerPageContent.innerHTML = '<p class="text-red-500 text-center">Não foi possível dividir o livro em páginas.</p>';
+                }
+                
                 applyZoom(); 
-                applyPagination(); 
-                readerContentLoading.classList.add('hidden'); 
-                readerContent.scrollTop = 0; 
+                readerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             } catch (err) {
                 console.error("Erro ao carregar ou converter DOCX:", err);
-                showMessage('Erro de Carregamento', `Não foi possível carregar ou converter o arquivo DOCX "${book.name}". Verifique o URL do arquivo e as permissões CORS. Detalhe: ${err.message}`);
-                readerContent.innerHTML = `<p class="text-red-500 text-center">Erro ao carregar o conteúdo do livro. Verifique se o URL do arquivo .docx está correto, acessível e se as permissões CORS estão configuradas adequadamente no servidor de hospedagem (GitHub Pages geralmente lida bem com isso para repositórios públicos).</p>`;
+                showMessage('Erro de Carregamento', `Não foi possível carregar o livro. Detalhe: ${err.message}`);
+                readerPageContent.innerHTML = `<p class="text-red-500 text-center">Erro ao carregar o conteúdo do livro.</p>`;
                 readerContentLoading.classList.add('hidden');
+                resetPagination();
             }
         }
 
-        // --- Controles do Leitor ---
+        function renderCurrentPage() {
+            if (bookPages.length === 0 || currentPageIndex < 0 || currentPageIndex >= bookPages.length) {
+                if (bookPages.length === 0 && readerContentLoading.classList.contains('hidden')) { 
+                     readerPageContent.innerHTML = '<p id="readerPlaceholder" class="text-slate-400 text-center">Selecione um livro da sua estante para ler.</p>';
+                } else if (bookPages.length > 0) {
+                     readerPageContent.innerHTML = '<p id="readerPlaceholder" class="text-slate-400 text-center">Fim do livro.</p>';
+                }
+                updatePageIndicator();
+                updateNavigationButtons();
+                return;
+            }
+            readerPageContent.innerHTML = bookPages[currentPageIndex];
+            readerPageContent.scrollTop = 0; 
+            applyZoom(); 
+            updatePageIndicator();
+            updateNavigationButtons();
+        }
+
+        function updatePageIndicator() {
+            if (bookPages.length > 0 && currentPageIndex < bookPages.length) { 
+                pageIndicator.textContent = `Página ${currentPageIndex + 1} de ${bookPages.length}`;
+            } else {
+                pageIndicator.textContent = 'Página - de -';
+            }
+        }
+
+        function updateNavigationButtons() {
+            prevPageButton.disabled = (currentPageIndex <= 0);
+            nextPageButton.disabled = (currentPageIndex >= bookPages.length - 1 || bookPages.length === 0);
+             if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
+                lucide.createIcons(); 
+            }
+        }
+        
+        function resetPagination(){
+            bookPages = [];
+            currentPageIndex = 0;
+            renderCurrentPage(); 
+        }
+
+        prevPageButton.addEventListener('click', () => {
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                renderCurrentPage();
+            }
+        });
+
+        nextPageButton.addEventListener('click', () => {
+            if (currentPageIndex < bookPages.length - 1) {
+                currentPageIndex++;
+                renderCurrentPage();
+            }
+        });
+
+
+        function applyZoom() {
+            readerPageContent.style.fontSize = `${currentZoomLevel}%`;
+        }
+
         zoomInButton.addEventListener('click', () => {
             if (currentZoomLevel < MAX_ZOOM) {
                 currentZoomLevel += ZOOM_STEP;
                 applyZoom();
             }
         });
-
         zoomOutButton.addEventListener('click', () => {
             if (currentZoomLevel > MIN_ZOOM) {
                 currentZoomLevel -= ZOOM_STEP;
@@ -363,45 +481,15 @@
             }
         });
 
-        function applyZoom() {
-            readerContent.style.fontSize = `${currentZoomLevel}%`;
-        }
-
-        togglePaginationButton.addEventListener('click', () => {
-            isPaginated = !isPaginated;
-            applyPagination();
-        });
-
-        function applyPagination() {
-            if (isPaginated) {
-                readerContent.classList.add('paginated');
-                togglePaginationButton.innerHTML = '<i data-lucide="layout-list" class="w-5 h-5"></i>'; 
-                togglePaginationButton.title = "Visualização Contínua";
-
-            } else {
-                readerContent.classList.remove('paginated');
-                togglePaginationButton.innerHTML = '<i data-lucide="book-open" class="w-5 h-5"></i>'; 
-                togglePaginationButton.title = "Alternar Paginação";
-            }
-            if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
-                lucide.createIcons(); 
-            } else {
-                console.warn('Lucide library not available for createIcons in applyPagination.');
-            }
-        }
-
-
-        // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
                 lucide.createIcons(); 
             } else {
-                console.error('Lucide library not available at DOMContentLoaded. Icons may not render correctly.');
-                showMessage('Aviso de Interface', 'Alguns ícones podem não ser exibidos corretamente. Verifique a conexão com a internet ou tente recarregar a página.');
+                console.error('Lucide library not available.');
             }
             renderBookShelf(); 
+            resetPagination(); 
         });
-
     </script>
 </body>
 </html>
