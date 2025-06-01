@@ -68,7 +68,7 @@
 
     <div id="bookShelf" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-8"></div>
 
-    <div id="readingView" class="mt-4 w-full">
+    <div id="readingView" class="mt-4 w-full hidden">
       <div id="messageArea" class="mb-4 text-center min-h-[24px]"></div>
       <div class="html-output-content">
         <div id="pagesContainer"></div>
@@ -101,6 +101,7 @@
     const messageArea = document.getElementById('messageArea');
     const pagesContainer = document.getElementById('pagesContainer');
     const pageIndicator = document.getElementById('pageIndicator');
+    const readingView = document.getElementById('readingView');
 
     let currentPage = 0;
     let totalPages = 0;
@@ -122,6 +123,7 @@
     async function loadBook(book) {
       displayMessage(\`Carregando "\${book.title}"...\`, 'loading');
       pagesContainer.innerHTML = '';
+      readingView.classList.remove('hidden');
 
       try {
         const response = await fetch(book.docxUrl);
@@ -150,7 +152,7 @@
         showPage(currentPage);
 
         displayMessage(\`"\${book.title}" carregado com sucesso!\`, 'success');
-        document.getElementById('readingView').scrollIntoView({ behavior: 'smooth' });
+        readingView.scrollIntoView({ behavior: 'smooth' });
       } catch (err) {
         displayMessage(\`Erro ao carregar o livro: \${err.message}\`, 'error');
       }
