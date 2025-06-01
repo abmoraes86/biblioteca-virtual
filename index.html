@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Minha Biblioteca Virtual</title>
+    <title>Biblioteca do André</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.1/mammoth.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -40,12 +41,15 @@
             text-overflow: ellipsis;
         }
         .html-output-content {
-            padding: 1.5rem;
+            padding: 2rem;
             background-color: white;
             border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-            overflow-wrap: break-word;
-            hyphens: auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            max-width: 720px;
+            margin: auto;
+            font-size: 1.1rem;
+            line-height: 1.75;
+            transition: font-size 0.3s ease;
         }
         .html-output-content img {
             max-width: 100%;
@@ -68,7 +72,6 @@
         }
         .html-output-content p {
             margin-bottom: 1em;
-            line-height: 1.6;
         }
         .html-output-content h1,
         .html-output-content h2,
@@ -83,7 +86,7 @@
 
     <div class="w-full max-w-4xl bg-white p-6 sm:p-8 rounded-xl shadow-2xl">
         <header class="mb-6 sm:mb-8 text-center">
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Minha Biblioteca Virtual</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Biblioteca do André</h1>
             <p class="text-sm text-gray-600 mt-2">Clique na capa para iniciar a leitura.</p>
         </header>
 
@@ -101,6 +104,12 @@
                 Utiliza <a href="https://github.com/mwilliamson/mammoth.js" target="_blank" class="text-indigo-600 hover:underline">mammoth.js</a> para conversão de .docx.
             </p>
         </footer>
+    </div>
+
+    <!-- Botão Flutuante de Zoom -->
+    <div id="zoomControls" class="fixed right-4 bottom-24 flex flex-col space-y-2 z-50">
+      <button onclick="zoomIn()" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg text-xl">+</button>
+      <button onclick="zoomOut()" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg text-xl">−</button>
     </div>
 
     <script>
@@ -173,8 +182,17 @@
             }
         }
 
+        let fontSize = 1.1;
+        function zoomIn() {
+            fontSize += 0.1;
+            document.querySelector('.html-output-content').style.fontSize = fontSize + 'rem';
+        }
+        function zoomOut() {
+            fontSize = Math.max(0.8, fontSize - 0.1);
+            document.querySelector('.html-output-content').style.fontSize = fontSize + 'rem';
+        }
+
         document.addEventListener('DOMContentLoaded', renderBookShelf);
     </script>
-
 </body>
 </html>
