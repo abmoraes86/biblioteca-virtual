@@ -6,56 +6,110 @@
   <title>Biblioteca do André</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.1/mammoth.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f3f4f6;
+      background-color: #f3f4f6; /* Cor de fundo cinza claro (Tailwind gray-100) */
     }
+    /* Estilização da capa do livro */
     .book-cover {
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      border: 1px solid #e5e7eb;
-      background-color: #fff;
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      border: 1px solid #e5e7eb; /* Borda cinza (Tailwind gray-200) */
+      background-color: #fff; /* Fundo branco */
     }
     .book-cover:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      transform: translateY(-5px); /* Efeito de levantar ao passar o mouse */
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); /* Sombra (Tailwind shadow-lg) */
     }
     .book-cover img {
       width: 100%;
-      aspect-ratio: 2 / 3;
-      object-fit: cover;
-      border-bottom: 1px solid #e5e7eb;
+      aspect-ratio: 2 / 3; /* Proporção comum para capas de livro */
+      object-fit: cover; /* Garante que a imagem cubra a área sem distorcer */
+      border-bottom: 1px solid #e5e7eb; /* Linha separadora abaixo da imagem */
     }
     .book-cover .title {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-      padding: 0.5rem;
+      font-size: 0.875rem; /* Tamanho da fonte (Tailwind text-sm) */
+      font-weight: 500; /* Peso da fonte (Tailwind font-medium) */
+      color: #374151; /* Cor do texto (Tailwind gray-700) */
+      padding: 0.5rem; /* Espaçamento interno (Tailwind p-2) */
       text-align: center;
+      overflow: hidden; /* Esconde texto que transborda */
+      text-overflow: ellipsis; /* Adiciona "..." para texto longo */
+      white-space: nowrap; /* Mantém o título em uma linha */
     }
-    .html-output-content {
+    /* Estilização da área de conteúdo HTML (leitor) */
+    .html-output-content-wrapper {
       background-color: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      max-width: 768px;
+      border-radius: 0.5rem; /* Bordas arredondadas (Tailwind rounded-lg) */
+      box-shadow: 0 0 15px rgba(0,0,0,0.1); /* Sombra suave */
+      max-width: 768px; /* Largura máxima (Tailwind md) */
       width: 100%;
-      font-size: 1.1rem;
-      line-height: 1.75;
-      margin: auto;
-      padding: 2rem;
+      margin: auto; /* Centraliza */
+      padding: 1rem; /* Espaçamento interno reduzido para telas menores */
     }
+    @media (min-width: 640px) { /* sm breakpoint */
+        .html-output-content-wrapper {
+            padding: 2rem; /* Padding original para telas maiores */
+        }
+    }
+    .html-output-content-wrapper #pagesContainer p,
+    .html-output-content-wrapper #pagesContainer h1,
+    .html-output-content-wrapper #pagesContainer h2,
+    .html-output-content-wrapper #pagesContainer h3,
+    .html-output-content-wrapper #pagesContainer h4,
+    .html-output-content-wrapper #pagesContainer h5,
+    .html-output-content-wrapper #pagesContainer h6,
+    .html-output-content-wrapper #pagesContainer ul,
+    .html-output-content-wrapper #pagesContainer ol,
+    .html-output-content-wrapper #pagesContainer table,
+    .html-output-content-wrapper #pagesContainer img {
+        font-size: 1.1rem; /* Tamanho da fonte base para o conteúdo */
+        line-height: 1.75; /* Altura da linha */
+        margin-bottom: 1em; /* Margem inferior para parágrafos e outros blocos */
+    }
+    .html-output-content-wrapper #pagesContainer img {
+        max-width: 100%; height: auto; border-radius: 0.375rem; /* Imagens responsivas e arredondadas */
+    }
+    .html-output-content-wrapper #pagesContainer table {
+        width: 100%; border-collapse: collapse;
+    }
+    .html-output-content-wrapper #pagesContainer th,
+    .html-output-content-wrapper #pagesContainer td {
+        border: 1px solid #e5e7eb; padding: 0.5em; text-align: left;
+    }
+    .html-output-content-wrapper #pagesContainer th {
+        background-color: #f9fafb;
+    }
+
+    /* Estilização dos controles de página */
     .page-controls {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-top: 1rem;
+      padding: 0.5rem;
     }
+    /* Estilização de cada página de conteúdo */
     .page {
-      display: none;
+      display: none; /* Páginas ficam escondidas por padrão */
+      min-height: 200px; /* Altura mínima para evitar colapso se vazia */
     }
     .page.active {
-      display: block;
+      display: block; /* Página ativa é exibida */
     }
+    /* Estilos para a área de mensagens */
+    #messageArea p {
+        padding: 0.75rem 1rem; /* py-3 px-4 */
+        border-radius: 0.375rem; /* rounded-md */
+        margin-bottom: 1rem;
+        font-size: 0.875rem; /* text-sm */
+    }
+    #messageArea .msg-loading { color: #1d4ed8; background-color: #eff6ff; border: 1px solid #93c5fd; } /* Tailwind blue-700 text, blue-50 bg, blue-300 border */
+    #messageArea .msg-error   { color: #b91c1c; background-color: #fee2e2; border: 1px solid #fca5a5; font-weight: 600; } /* Tailwind red-700 text, red-100 bg, red-300 border */
+    #messageArea .msg-success { color: #047857; background-color: #d1fae5; border: 1px solid #6ee7b7; } /* Tailwind green-700 text, green-100 bg, green-300 border */
+    #messageArea .msg-warning { color: #a16207; background-color: #fefce8; border: 1px solid #fde047; } /* Tailwind yellow-700 text, yellow-50 bg, yellow-400 border */
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
@@ -63,129 +117,279 @@
   <div class="w-full max-w-4xl bg-white p-6 sm:p-8 rounded-xl shadow-2xl">
     <header class="mb-6 sm:mb-8 text-center">
       <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Biblioteca do André</h1>
-      <p class="text-sm text-gray-600 mt-2">Clique na capa para iniciar a leitura.</p>
+      <p class="text-sm text-gray-600 mt-2">Clique na capa de um livro para iniciar a leitura.</p>
     </header>
 
-    <div id="bookShelf" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-8"></div>
+    <div id="bookShelf" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-8">
+        </div>
 
     <div id="readingView" class="mt-4 w-full hidden">
-      <div id="messageArea" class="mb-4 text-center min-h-[24px]"></div>
-      <div class="html-output-content">
-        <div id="pagesContainer"></div>
+      <div id="messageArea" class="mb-4 text-center min-h-[48px]">
+          </div>
+      <div class="html-output-content-wrapper">
+        <div id="pagesContainer">
+            <p class="text-gray-400 text-center">Selecione um livro da estante para ler.</p>
+            </div>
         <div class="page-controls">
-          <button onclick="prevPage()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">◀ Página Anterior</button>
-          <span id="pageIndicator" class="text-sm text-gray-700 self-center">Página 0</span>
-          <button onclick="nextPage()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Próxima Página ▶</button>
+          <button id="prevPageBtn" onclick="prevPage()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150">
+            ◀ Anterior
+          </button>
+          <span id="pageIndicator" class="text-sm text-gray-700 self-center mx-2 sm:mx-4">Página 0 de 0</span>
+          <button id="nextPageBtn" onclick="nextPage()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150">
+            Próxima ▶
+          </button>
         </div>
       </div>
     </div>
 
     <footer class="mt-6 sm:mt-8 text-center">
       <p class="text-xs text-gray-500">
-        Utiliza <a href="https://github.com/mwilliamson/mammoth.js" target="_blank" class="text-indigo-600 hover:underline">mammoth.js</a> para conversão de .docx.
+        Utiliza <a href="https://github.com/mwilliamson/mammoth.js" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">mammoth.js</a> para conversão de .docx.
       </p>
     </footer>
   </div>
 
   <script>
+    // --- CONFIGURAÇÃO DOS LIVROS ---
+    // Adicione seus livros aqui.
+    // Certifique-se de que os caminhos para coverImageUrl e docxUrl estão corretos
+    // em relação à localização deste arquivo index.html.
+    // Exemplo: se index.html está na raiz, e você tem pastas 'capas' e 'livros' na raiz.
     const bookData = [
       {
-        id: 'curso-alta-performance',
-        title: 'Curso de Alta Performance',
-        coverImageUrl: 'capas/curso_alta_performance_capa.png',
-        docxUrl: 'livros/Curso_Alta_Performance.docx'
+        id: 'curso-alta-performance', // Identificador único
+        title: 'Curso de Alta Performance', // Título exibido na capa
+        coverImageUrl: './capas/curso_alta_performance_capa.png', // Caminho para a imagem da capa
+        docxUrl: './livros/Curso_Alta_Performance.docx' // Caminho para o arquivo .docx
       }
+      // Adicione mais objetos de livro aqui, seguindo o mesmo formato:
+      // {
+      //   id: 'outro-livro',
+      //   title: 'Outro Livro Interessante',
+      //   coverImageUrl: './capas/outra_capa.png',
+      //   docxUrl: './livros/outro_livro.docx'
+      // },
     ];
 
+    // Elementos do DOM (Document Object Model)
     const bookShelfDiv = document.getElementById('bookShelf');
     const messageArea = document.getElementById('messageArea');
     const pagesContainer = document.getElementById('pagesContainer');
     const pageIndicator = document.getElementById('pageIndicator');
     const readingView = document.getElementById('readingView');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
 
+    // Variáveis de estado para paginação
     let currentPage = 0;
     let totalPages = 0;
+    let currentBookPagesElements = []; // Armazena os elementos DOM das páginas do livro atual
 
+    // Função para renderizar a estante de livros
     function renderBookShelf() {
-      bookShelfDiv.innerHTML = '';
+      bookShelfDiv.innerHTML = ''; // Limpa a estante antes de renderizar
+
+      if (bookData.length === 0) {
+        bookShelfDiv.innerHTML = '<p class="col-span-full text-center text-gray-500">Nenhum livro configurado na biblioteca.</p>';
+        return;
+      }
+
       bookData.forEach(book => {
         const bookElement = document.createElement('div');
         bookElement.className = 'book-cover rounded-lg overflow-hidden shadow-md';
+        // Imagem da capa com fallback para caso a imagem não carregue
         bookElement.innerHTML = `
-          <img src="${book.coverImageUrl}" alt="Capa do livro ${book.title}">
+          <img src="${book.coverImageUrl}" alt="Capa do livro ${book.title}" onerror="this.onerror=null;this.src='https://placehold.co/200x300/cccccc/FFFFFF?text=Capa+Indispon%C3%ADvel';">
           <p class="title">${book.title}</p>
         `;
+        // Adiciona evento de clique para carregar o livro
         bookElement.addEventListener('click', () => loadBook(book));
         bookShelfDiv.appendChild(bookElement);
       });
     }
 
+    // Função assíncrona para carregar e exibir um livro
     async function loadBook(book) {
-      displayMessage(\`Carregando "\${book.title}"...\`, 'loading');
-      pagesContainer.innerHTML = '';
-      readingView.classList.remove('hidden');
+      displayMessage(`Carregando "${book.title}"...`, 'loading');
+      pagesContainer.innerHTML = ''; // Limpa o conteúdo de páginas anterior
+      readingView.classList.remove('hidden'); // Torna a área de leitura visível
+      currentPage = 0;
+      totalPages = 0;
+      currentBookPagesElements = []; // Reseta as páginas do livro
+      updatePageControls(); // Atualiza o estado inicial dos botões de paginação
 
       try {
+        console.log(`[DEBUG] Tentando buscar o arquivo .docx: ${book.docxUrl}`);
+        // Busca o arquivo .docx
         const response = await fetch(book.docxUrl);
-        if (!response.ok) throw new Error(\`Erro: \${response.status}\`);
-        const arrayBuffer = await response.arrayBuffer();
-        const result = await mammoth.convertToHtml({ arrayBuffer });
+        if (!response.ok) {
+          // Se a busca falhar (ex: arquivo não encontrado), lança um erro
+          throw new Error(`Falha ao buscar o arquivo: ${response.status} ${response.statusText}`);
+        }
+        const arrayBuffer = await response.arrayBuffer(); // Converte a resposta para ArrayBuffer
 
+        // Converte o ArrayBuffer para HTML usando mammoth.js
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+        console.log("[DEBUG] HTML gerado pelo Mammoth.js:", result.value);
+
+        // Cria um container temporário para processar o HTML gerado
         const tempContainer = document.createElement('div');
         tempContainer.innerHTML = result.value;
-        const elements = Array.from(tempContainer.children);
-        const elementsPerPage = 6;
+        
+        // Extrai os elementos filhos do HTML gerado para paginação
+        // .children pega apenas elementos HTML, ignorando nós de texto soltos entre eles.
+        const elements = Array.from(tempContainer.children); 
+        console.log("[DEBUG] Elementos filhos do HTML para paginação:", elements);
 
-        const pages = [];
-        for (let i = 0; i < elements.length; i += elementsPerPage) {
-          const page = document.createElement('div');
-          page.classList.add('page');
-          for (let j = i; j < i + elementsPerPage && j < elements.length; j++) {
-            page.appendChild(elements[j].cloneNode(true));
-          }
-          pages.push(page);
+        if (elements.length === 0 && result.value.trim() !== '') {
+             // Fallback: Se não houver elementos filhos diretos, mas houver conteúdo HTML,
+             // trata o conteúdo como uma única página.
+             console.warn("[DEBUG] Nenhum elemento filho encontrado, mas result.value não está vazio. Inserindo como página única.");
+             const pageDiv = document.createElement('div');
+             pageDiv.classList.add('page');
+             pageDiv.innerHTML = result.value;
+             currentBookPagesElements.push(pageDiv);
+        } else if (elements.length > 0) {
+            // Define quantos elementos do Word (parágrafos, tabelas, listas, etc.) irão compor uma página no leitor.
+            // Ajuste este valor conforme necessário para a densidade de conteúdo desejada por página.
+            const elementsPerPage = 10; // Exemplo: 10 elementos por página
+            for (let i = 0; i < elements.length; i += elementsPerPage) {
+              const pageDiv = document.createElement('div');
+              pageDiv.classList.add('page');
+              // Agrupa 'elementsPerPage' elementos em uma nova página
+              for (let j = i; j < i + elementsPerPage && j < elements.length; j++) {
+                pageDiv.appendChild(elements[j].cloneNode(true)); // Clona o elemento para evitar problemas de referência
+              }
+              currentBookPagesElements.push(pageDiv);
+            }
+        } else {
+            // Se não houver conteúdo ou elementos, exibe um aviso.
+            console.warn("[DEBUG] Nenhum conteúdo para exibir do Mammoth.js ou result.value está vazio.");
+            displayMessage(`Nenhum conteúdo para exibir para "${book.title}". O arquivo pode estar vazio ou houve um problema na conversão.`, 'warning');
+            totalPages = 0;
+            updatePageControls();
+            // Coloca uma mensagem no container de páginas
+            pagesContainer.innerHTML = `<p class="text-gray-500 text-center">Conteúdo não disponível ou vazio para este livro.</p>`;
+            return; 
         }
+        
+        console.log("[DEBUG] Páginas DOM criadas:", currentBookPagesElements);
 
-        pages.forEach(p => pagesContainer.appendChild(p));
-        totalPages = pages.length;
-        currentPage = 0;
-        showPage(currentPage);
+        totalPages = currentBookPagesElements.length; // Define o número total de páginas
 
-        displayMessage(\`"\${book.title}" carregado com sucesso!\`, 'success');
-        readingView.scrollIntoView({ behavior: 'smooth' });
+        if (totalPages > 0) {
+            // Adiciona todas as páginas criadas ao container no DOM
+            currentBookPagesElements.forEach(p => pagesContainer.appendChild(p));
+            showPage(0); // Exibe a primeira página
+            displayMessage(`"${book.title}" carregado com sucesso!`, 'success');
+        } else {
+            displayMessage(`Não foi possível paginar o conteúdo de "${book.title}". Verifique o console para mais detalhes.`, 'warning');
+            pagesContainer.innerHTML = `<p class="text-gray-500 text-center">Não foi possível exibir o conteúdo paginado.</p>`;
+        }
+        
+        updatePageControls(); // Atualiza os controles de paginação
+        // Rola a visualização para o início da área de leitura
+        readingView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
       } catch (err) {
-        displayMessage(\`Erro ao carregar o livro: \${err.message}\`, 'error');
+        console.error("Erro ao carregar ou converter o livro:", err);
+        displayMessage(`Erro ao carregar "${book.title}": ${err.message}. Verifique o console (F12) e se o caminho do arquivo está correto.`, 'error');
+        pagesContainer.innerHTML = `<p class="text-red-500 text-center">Falha ao carregar o livro. Verifique o console para detalhes.</p>`;
+        // Opcional: esconder a área de leitura em caso de erro grave
+        // readingView.classList.add('hidden'); 
       }
     }
 
-    function showPage(index) {
-      const allPages = document.querySelectorAll('.page');
-      allPages.forEach(p => p.classList.remove('active'));
-      if (allPages[index]) {
-        allPages[index].classList.add('active');
-        pageIndicator.textContent = \`Página \${index + 1} de \${totalPages}\`;
+    // Função para exibir uma página específica
+    function showPage(pageIndex) {
+      if (pageIndex < 0 || pageIndex >= totalPages) {
+          console.warn(`[DEBUG] Tentativa de mostrar página inválida: ${pageIndex}. Total de páginas: ${totalPages}`);
+          return; // Não faz nada se o índice da página for inválido
       }
+      currentPage = pageIndex; // Atualiza a página atual
+
+      // Esconde todas as páginas
+      currentBookPagesElements.forEach(pageElement => {
+        pageElement.style.display = 'none';
+        pageElement.classList.remove('active');
+      });
+
+      // Mostra apenas a página atual
+      if (currentBookPagesElements[currentPage]) {
+        currentBookPagesElements[currentPage].style.display = 'block';
+        currentBookPagesElements[currentPage].classList.add('active');
+      }
+      updatePageControls(); // Atualiza o indicador de página e o estado dos botões
     }
 
+    // Função para atualizar os controles de paginação (indicador e botões)
+    function updatePageControls() {
+        if (totalPages === 0) {
+            pageIndicator.textContent = 'Página 0 de 0';
+            prevPageBtn.disabled = true;
+            nextPageBtn.disabled = true;
+        } else {
+            pageIndicator.textContent = `Página ${currentPage + 1} de ${totalPages}`;
+            prevPageBtn.disabled = currentPage === 0; // Desabilita "Anterior" na primeira página
+            nextPageBtn.disabled = currentPage >= totalPages - 1; // Desabilita "Próxima" na última página
+        }
+    }
+
+    // Função para ir para a próxima página
     function nextPage() {
       if (currentPage < totalPages - 1) {
-        currentPage++;
-        showPage(currentPage);
+        showPage(currentPage + 1);
       }
     }
 
+    // Função para ir para a página anterior
     function prevPage() {
       if (currentPage > 0) {
-        currentPage--;
-        showPage(currentPage);
+        showPage(currentPage - 1);
       }
     }
 
-    function displayMessage(message, type) {
-      messageArea.innerHTML = '<p class="text-sm text-gray-600">' + message + '</p>';
+    // Função para exibir mensagens de status ao usuário
+    function displayMessage(message, type = 'info', autoClearAfterMs = 7000) {
+        messageArea.innerHTML = ''; // Limpa mensagens anteriores
+        const messageP = document.createElement('p');
+        messageP.innerHTML = message; // Permite HTML básico na mensagem (cuidado com XSS se a mensagem vier de fontes não confiáveis)
+
+        // Define a classe CSS com base no tipo de mensagem para estilização
+        switch (type) {
+            case 'loading':
+                messageP.className = 'msg-loading animate-pulse';
+                break;
+            case 'error':
+                messageP.className = 'msg-error';
+                break;
+            case 'success':
+                messageP.className = 'msg-success';
+                break;
+            case 'warning':
+                messageP.className = 'msg-warning';
+                break;
+            default: // 'info' ou qualquer outro tipo não especificado
+                messageP.className = 'text-gray-700 bg-gray-100 border border-gray-300'; // Um estilo padrão para info
+        }
+        messageArea.appendChild(messageP);
+
+        // Limpa a mensagem automaticamente após um tempo (exceto para 'loading')
+        if (type !== 'loading' && autoClearAfterMs > 0) {
+            setTimeout(() => {
+                // Verifica se a mensagem ainda é a mesma antes de remover
+                if (messageArea.contains(messageP)) {
+                     messageArea.removeChild(messageP);
+                }
+            }, autoClearAfterMs);
+        }
     }
 
-    document.addEventListener('DOMContentLoaded', renderBookShelf);
+    // Evento que é disparado quando o DOM está completamente carregado
+    document.addEventListener('DOMContentLoaded', () => {
+        renderBookShelf(); // Renderiza a estante de livros
+        updatePageControls(); // Inicializa o estado dos controles de página
+    });
   </script>
 </body>
 </html>
