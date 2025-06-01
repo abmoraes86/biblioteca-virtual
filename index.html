@@ -10,131 +10,171 @@
     <script src="https://unpkg.com/lucide@0.292.0/dist/umd/lucide.min.js"></script>
 
     <style>
+        /* Definição de Variáveis CSS para Temas */
+        :root {
+            --bg-color-light: #f0f2f5;
+            --text-color-light: #1f2937; /* gray-800 */
+            --card-bg-light: #ffffff;
+            --border-color-light: #e5e7eb; /* gray-200 */
+            --header-text-light: #2563eb; /* blue-600 */
+            --muted-text-light: #6b7280; /* gray-500 */
+            --button-bg-light: #3b82f6;
+            --button-hover-bg-light: #2563eb;
+            --button-disabled-bg-light: #9ca3af;
+            --icon-button-bg-light: #e5e7eb;
+            --icon-button-hover-bg-light: #d1d5db;
+            --icon-button-text-light: #374151;
+
+            --bg-color-dark: #111827; /* gray-900 */
+            --text-color-dark: #f3f4f6; /* gray-100 */
+            --card-bg-dark: #1f2937; /* gray-800 */
+            --border-color-dark: #374151; /* gray-700 */
+            --header-text-dark: #60a5fa; /* blue-400 */
+            --muted-text-dark: #9ca3af; /* gray-400 */
+            --button-bg-dark: #2563eb;
+            --button-hover-bg-dark: #1d4ed8;
+            --button-disabled-bg-dark: #4b5563; /* gray-600 */
+            --icon-button-bg-dark: #374151; /* gray-700 */
+            --icon-button-hover-bg-dark: #4b5563; /* gray-600 */
+            --icon-button-text-dark: #d1d5db; /* gray-300 */
+
+            --animation-duration: 0.25s; /* Duração da animação de fade */
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
             scroll-behavior: smooth;
+            transition: background-color 0.3s, color 0.3s;
         }
+
+        /* Tema Claro (Default) */
+        body.theme-light {
+            --bg-color: var(--bg-color-light);
+            --text-color: var(--text-color-light);
+            --card-bg: var(--card-bg-light);
+            --border-color: var(--border-color-light);
+            --header-text: var(--header-text-light);
+            --muted-text: var(--muted-text-light);
+            --button-bg: var(--button-bg-light);
+            --button-hover-bg: var(--button-hover-bg-light);
+            --button-disabled-bg: var(--button-disabled-bg-light);
+            --icon-button-bg: var(--icon-button-bg-light);
+            --icon-button-hover-bg: var(--icon-button-hover-bg-light);
+            --icon-button-text: var(--icon-button-text-light);
+        }
+
+        /* Tema Escuro */
+        body.theme-dark {
+            --bg-color: var(--bg-color-dark);
+            --text-color: var(--text-color-dark);
+            --card-bg: var(--card-bg-dark);
+            --border-color: var(--border-color-dark);
+            --header-text: var(--header-text-dark);
+            --muted-text: var(--muted-text-dark);
+            --button-bg: var(--button-bg-dark);
+            --button-hover-bg: var(--button-hover-bg-dark);
+            --button-disabled-bg: var(--button-disabled-bg-dark);
+            --icon-button-bg: var(--icon-button-bg-dark);
+            --icon-button-hover-bg: var(--icon-button-hover-bg-dark);
+            --icon-button-text: var(--icon-button-text-dark);
+        }
+
+
         .book-shelf-item {
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            background-color: var(--card-bg);
         }
+        .book-shelf-item p { 
+             color: var(--text-color);
+        }
+
         .book-shelf-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
-        /* Reader Section Styling */
-        #readerSection {
-            width: 100%; /* Ocupa a largura total */
-        }
-
+        #readerSection { width: 100%; }
         #readerContentWrapper {
-            background-color: #fff;
+            background-color: var(--card-bg);
             border-radius: 0.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 1rem; /* Espaçamento interno */
+            padding: 1rem;
         }
         
         .reader-page-content {
-            min-height: 65vh; /* Altura mínima para o conteúdo da página */
-            max-height: 65vh; /* Altura máxima, com rolagem interna se necessário */
-            overflow-y: auto; /* Permite rolagem vertical dentro da página */
+            min-height: 65vh; 
+            max-height: 65vh; 
+            overflow-y: auto; 
             line-height: 1.7;
-            padding: 0.5rem; /* Espaçamento interno da página */
-            transition: font-size 0.3s ease;
+            padding: 0.5rem; 
+            transition: font-size 0.3s ease, opacity var(--animation-duration) ease-out;
+            opacity: 1; 
+            color: var(--text-color); 
             -webkit-column-break-inside: avoid;
-                      page-break-inside: avoid;
-                           break-inside: avoid-column;
+            page-break-inside: avoid;
+            break-inside: avoid-column;
         }
 
-        .reader-page-content p { 
-            margin-bottom: 1em; 
-            break-inside: avoid-page; 
+        /* Classes para animação de fade */
+        .page-fade-out {
+            opacity: 0 !important;
         }
+        .page-fade-in {
+            opacity: 1 !important;
+        }
+
+        .reader-page-content p { margin-bottom: 1em; break-inside: avoid-page; }
         .reader-page-content h1, .reader-page-content h2, .reader-page-content h3, .reader-page-content h4, .reader-page-content h5, .reader-page-content h6 {
-            margin-top: 1.2em;
-            margin-bottom: 0.6em;
-            line-height: 1.3;
-            font-weight: 600;
-            break-before: auto; 
-            break-after: avoid-page;
+            margin-top: 1.2em; margin-bottom: 0.6em; line-height: 1.3; font-weight: 600;
+            break-before: auto; break-after: avoid-page;
         }
         .reader-page-content h1 { font-size: 1.8em; }
         .reader-page-content h2 { font-size: 1.6em; }
         .reader-page-content h3 { font-size: 1.4em; }
         
         .reader-page-content img, .reader-page-content table, .reader-page-content ul, .reader-page-content ol, .reader-page-content pre {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 1em auto;
-            border-radius: 0.25rem;
-            break-inside: avoid-page; 
+            max-width: 100%; height: auto; display: block; margin: 1em auto;
+            border-radius: 0.25rem; break-inside: avoid-page; 
         }
 
         .reader-page-content::-webkit-scrollbar { width: 8px; }
-        .reader-page-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .reader-page-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; } 
         .reader-page-content::-webkit-scrollbar-thumb { background: #aaa; border-radius: 10px; }
         .reader-page-content::-webkit-scrollbar-thumb:hover { background: #777; }
 
         .nav-button {
-            background-color: #3b82f6;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-weight: 500;
+            background-color: var(--button-bg);
+            color: white; 
+            padding: 0.5rem 1rem; border-radius: 0.375rem; border: none;
+            cursor: pointer; transition: background-color 0.2s; font-weight: 500;
         }
-        .nav-button:hover { background-color: #2563eb; }
-        .nav-button:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
-        }
-        #pageIndicator {
-            font-size: 0.9rem;
-            color: #4b5563; 
-        }
+        .nav-button:hover { background-color: var(--button-hover-bg); }
+        .nav-button:disabled { background-color: var(--button-disabled-bg); cursor: not-allowed; }
+        
+        #pageIndicator { font-size: 0.9rem; color: var(--muted-text); }
 
-        #scrollToShelfButton {
-            background-color: #e5e7eb; /* gray-200 */
-            color: #374151; /* gray-700 */
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.2s, box-shadow 0.2s;
+        #scrollToShelfButton, .theme-toggle-button, #zoomInButton, #zoomOutButton {
+            background-color: var(--icon-button-bg);
+            color: var(--icon-button-text);
+            border-radius: 0.375rem; 
+            width: 40px; height: 40px; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s, color 0.2s; /* Adicionado color transition */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+         #scrollToShelfButton { border-radius: 50%; } 
+
+        #scrollToShelfButton:hover, .theme-toggle-button:hover, #zoomInButton:hover, #zoomOutButton:hover {
+            background-color: var(--icon-button-hover-bg);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        #scrollToShelfButton:hover {
-            background-color: #d1d5db; /* gray-300 */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-
-
-        .message-box-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); display: flex;
-            justify-content: center; align-items: center; z-index: 1000;
-            opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .message-box-overlay.visible { opacity: 1; visibility: visible; }
-        .message-box-content {
-            background-color: white; padding: 2rem; border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); text-align: center;
-            max-width: 90%; width: 400px;
-        }
-        .message-box-content h3 { margin-top: 0; margin-bottom: 1rem; font-size: 1.25rem; color: #333; }
-        .message-box-content p { margin-bottom: 1.5rem; color: #555; }
-        .message-box-button {
-            background-color: #3b82f6; color: white; padding: 0.5rem 1rem;
-            border-radius: 0.375rem; border: none; cursor: pointer; transition: background-color 0.2s;
-        }
-        .message-box-button:hover { background-color: #2563eb; }
+        
+        .header-title { color: var(--header-text); }
+        .header-subtitle { color: var(--muted-text); }
+        .section-title { color: var(--text-color); border-bottom-color: var(--border-color); }
+        .placeholder-text { color: var(--muted-text); }
 
         .loader {
             border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%;
@@ -144,70 +184,74 @@
 
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 p-4 md:p-8">
-
-    <header class="text-center mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-blue-600">Biblioteca do André</h1>
-        <p class="text-slate-600 mt-2">Selecione um livro da estante para uma experiência de leitura paginada!</p>
-    </header>
-
-    <section id="bookShelfSection" class="mb-10">
-        <h2 class="text-2xl font-semibold mb-6 text-slate-700 border-b pb-2">Estante</h2>
-        <div id="bookShelf" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-            <p id="emptyShelfMessage" class="text-slate-500 col-span-full text-center py-4">Nenhum livro disponível no momento.</p>
-        </div>
-    </section>
-
-    <section id="readerSection" class="mb-10"> 
-        <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
-            <h2 id="currentBookTitle" class="text-2xl font-semibold text-slate-700 mb-2 sm:mb-0">Leitor</h2>
-            <div class="flex items-center space-x-2">
-                <button id="zoomOutButton" title="Diminuir Zoom" class="p-2 bg-slate-200 hover:bg-slate-300 rounded-md transition">
-                    <i data-lucide="zoom-out" class="w-5 h-5"></i>
-                </button>
-                <button id="zoomInButton" title="Aumentar Zoom" class="p-2 bg-slate-200 hover:bg-slate-300 rounded-md transition">
-                    <i data-lucide="zoom-in" class="w-5 h-5"></i>
+<body class="theme-light"> 
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <header class="text-center mb-8 relative"> 
+            <div class="flex justify-end p-2 absolute top-0 right-0"> 
+                <button id="themeToggleButton" class="theme-toggle-button" title="Alternar Tema">
+                    <i data-lucide="moon" class="w-5 h-5 block" id="themeIconMoon"></i>
+                    <i data-lucide="sun" class="w-5 h-5 hidden" id="themeIconSun"></i>
                 </button>
             </div>
-        </div>
-        <div id="readerContentLoading" class="hidden text-center py-10">
-            <div class="loader"></div>
-            <p class="text-slate-500 mt-2">Carregando conteúdo do livro...</p>
-        </div>
-        
-        <div id="readerContentWrapper" class="w-full">
-            <div id="readerPageContent" class="reader-page-content">
-                 <p id="readerPlaceholder" class="text-slate-400 text-center">Selecione um livro da sua estante para ler.</p>
+            <h1 class="text-3xl md:text-4xl font-bold header-title">Biblioteca de Alta Performance</h1>
+            <p class="mt-2 header-subtitle">Selecione um livro da estante para uma experiência de leitura paginada!</p>
+        </header>
+
+        <section id="bookShelfSection" class="mb-10">
+            <h2 class="text-2xl font-semibold mb-6 border-b pb-2 section-title">Estante</h2>
+            <div id="bookShelf" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                <p id="emptyShelfMessage" class="col-span-full text-center py-4 placeholder-text">Nenhum livro disponível no momento.</p>
             </div>
-        </div>
+        </section>
 
-        <div id="readerNavigation" class="flex justify-between items-center mt-4">
-            <button id="prevPageButton" class="nav-button" disabled>
-                <i data-lucide="arrow-left" class="inline-block mr-1 w-4 h-4"></i> Anterior
-            </button>
-            <span id="pageIndicator">Página - de -</span>
-            <button id="nextPageButton" class="nav-button" disabled>
-                Próxima <i data-lucide="arrow-right" class="inline-block ml-1 w-4 h-4"></i>
-            </button>
-        </div>
-        
-        <div class="mt-8 flex justify-center">
-            <button id="scrollToShelfButton" title="Ir para a Estante">
-                <i data-lucide="arrow-up-circle" class="w-6 h-6"></i>
-            </button>
-        </div>
-    </section>
+        <section id="readerSection" class="mb-10"> 
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
+                <h2 id="currentBookTitle" class="text-2xl font-semibold section-title">Leitor</h2>
+                <div class="flex items-center space-x-2">
+                    <button id="zoomOutButton" title="Diminuir Zoom" class="p-2 rounded-md transition">
+                        <i data-lucide="zoom-out" class="w-5 h-5"></i>
+                    </button>
+                    <button id="zoomInButton" title="Aumentar Zoom" class="p-2 rounded-md transition">
+                        <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="readerContentLoading" class="hidden text-center py-10">
+                <div class="loader"></div>
+                <p class="mt-2 placeholder-text">Carregando conteúdo do livro...</p>
+            </div>
+            
+            <div id="readerContentWrapper" class="w-full">
+                <div id="readerPageContent" class="reader-page-content">
+                     <p id="readerPlaceholder" class="text-center placeholder-text">Selecione um livro da sua estante para ler.</p>
+                </div>
+            </div>
 
-    <div id="messageBox" class="message-box-overlay">
-        <div class="message-box-content">
-            <h3 id="messageBoxTitle">Atenção</h3>
-            <p id="messageBoxText">Mensagem aqui.</p>
-            <button id="messageBoxOkButton" class="message-box-button">OK</button>
-        </div>
-    </div>
+            <div id="readerNavigation" class="flex justify-between items-center mt-4">
+                <button id="prevPageButton" class="nav-button" disabled>
+                    <i data-lucide="arrow-left" class="inline-block mr-1 w-4 h-4"></i> Anterior
+                </button>
+                <span id="pageIndicator">Página - de -</span>
+                <button id="nextPageButton" class="nav-button" disabled>
+                    Próxima <i data-lucide="arrow-right" class="inline-block ml-1 w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button id="scrollToShelfButton" title="Ir para a Estante">
+                    <i data-lucide="arrow-up-circle" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </section>
+    </div> 
 
     <script>
-        const bookShelfSection = document.getElementById('bookShelfSection'); // Target for scrolling
+        // Elementos DOM
+        const bodyElement = document.body;
+        const themeToggleButton = document.getElementById('themeToggleButton');
+        const themeIconMoon = document.getElementById('themeIconMoon');
+        const themeIconSun = document.getElementById('themeIconSun');
+        const bookShelfSection = document.getElementById('bookShelfSection');
         const bookShelf = document.getElementById('bookShelf');
         const readerSection = document.getElementById('readerSection'); 
         const readerContentLoading = document.getElementById('readerContentLoading');
@@ -215,18 +259,13 @@
         const zoomInButton = document.getElementById('zoomInButton');
         const zoomOutButton = document.getElementById('zoomOutButton');
         const emptyShelfMessage = document.getElementById('emptyShelfMessage');
-        
         const readerPageContent = document.getElementById('readerPageContent');
         const prevPageButton = document.getElementById('prevPageButton');
         const nextPageButton = document.getElementById('nextPageButton');
         const pageIndicator = document.getElementById('pageIndicator');
         const scrollToShelfButton = document.getElementById('scrollToShelfButton');
 
-        const messageBox = document.getElementById('messageBox');
-        const messageBoxTitle = document.getElementById('messageBoxTitle');
-        const messageBoxText = document.getElementById('messageBoxText');
-        const messageBoxOkButton = document.getElementById('messageBoxOkButton');
-
+        // Configurações e Estado
         const books = [
             {
                 id: 'a-alta-performance', 
@@ -252,120 +291,164 @@
         const ZOOM_STEP = 10; 
         const MIN_ZOOM = 70;
         const MAX_ZOOM = 150;
-        
         let bookPages = []; 
         let currentPageIndex = 0;
-        // Heurística ajustada: Número aproximado de elementos de bloco por página.
-        const ELEMENTS_PER_PAGE_TARGET = 12; // Aumentado de 7 para 12
+        const ELEMENTS_PER_PAGE_TARGET = 12; 
+        let currentLoadedBookId = null; 
+        const ANIMATION_DURATION_MS = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--animation-duration') || '0.25s') * 1000;
 
-        function showMessage(title, text) {
-            messageBoxTitle.textContent = title;
-            messageBoxText.textContent = text;
-            messageBox.classList.add('visible');
+        // --- Funções de Tema ---
+        function applyTheme(theme) {
+            bodyElement.classList.remove('theme-light', 'theme-dark');
+            bodyElement.classList.add(theme);
+            localStorage.setItem('bibliotecaAndreTheme', theme);
+            if (theme === 'theme-dark') {
+                themeIconMoon.classList.add('hidden');
+                themeIconSun.classList.remove('hidden');
+            } else {
+                themeIconMoon.classList.remove('hidden');
+                themeIconSun.classList.add('hidden');
+            }
+            // Recria os ícones Lucide para garantir que peguem as cores do novo tema, se necessário
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
         }
-        messageBoxOkButton.addEventListener('click', () => messageBox.classList.remove('visible'));
 
+        themeToggleButton.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('bibliotecaAndreTheme') || 'theme-light';
+            const newTheme = currentTheme === 'theme-light' ? 'theme-dark' : 'theme-light';
+            applyTheme(newTheme);
+        });
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('bibliotecaAndreTheme') || 'theme-light';
+            applyTheme(savedTheme);
+        }
+        
+        // --- Feedback ao Usuário (Simples) ---
+        function simpleUserFeedback(type, message) {
+            if (type === 'error') { console.error(`ERRO: ${message}`);} 
+            else if (type === 'info') { console.info(`INFO: ${message}`);}
+        }
+
+        // --- Renderização da Estante ---
         function renderBookShelf() {
             bookShelf.innerHTML = ''; 
             if (books.length === 0) {
                 emptyShelfMessage.textContent = "Nenhum livro configurado para exibição.";
-                emptyShelfMessage.classList.remove('hidden');
-                return;
+                emptyShelfMessage.classList.remove('hidden'); return;
             }
-            
             const validBooks = books.filter(book => 
                 book.fileUrl && !book.fileUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io') &&
                 book.coverUrl && !book.coverUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io')
             );
-
             if (validBooks.length === 0 && books.length > 0) { 
                  emptyShelfMessage.textContent = "Configure os URLs dos arquivos .docx e capas para exibir os livros.";
                  emptyShelfMessage.classList.remove('hidden');
             } else if (books.length > 0) { 
                 emptyShelfMessage.classList.add('hidden');
             }
-
             books.forEach(book => { 
                 const bookElement = document.createElement('div');
-                bookElement.classList.add('book-shelf-item', 'bg-white', 'p-3', 'rounded-lg', 'shadow-sm', 'cursor-pointer', 'flex', 'flex-col', 'items-center', 'text-center');
+                bookElement.classList.add('book-shelf-item', 'p-3', 'rounded-lg', 'shadow-sm', 'cursor-pointer', 'flex', 'flex-col', 'items-center', 'text-center');
                 bookElement.setAttribute('data-book-id', book.id);
-
                 const img = document.createElement('img');
                 img.src = book.coverUrl; 
                 img.alt = `Capa de ${book.name}`;
                 img.classList.add('w-full', 'h-auto', 'object-cover', 'rounded-md', 'mb-2', 'max-w-[150px]', 'aspect-[2/3]');
-                img.onerror = function() { 
-                    this.src = `https://placehold.co/200x300/cccccc/333333?text=Capa+Indispon%C3%ADvel&font=inter`;
-                };
+                img.onerror = function() { this.src = `https://placehold.co/200x300/cccccc/333333?text=Capa+Indispon%C3%ADvel&font=inter`;};
                 const title = document.createElement('p');
                 title.textContent = book.name.length > 25 ? book.name.substring(0, 22) + '...' : book.name;
-                title.classList.add('text-sm', 'font-medium', 'text-slate-700', 'mt-1');
+                title.classList.add('text-sm', 'font-medium', 'mt-1'); 
                 title.title = book.name;
-                bookElement.appendChild(img);
-                bookElement.appendChild(title);
-
+                bookElement.appendChild(img); bookElement.appendChild(title);
                 if (book.fileUrl && !book.fileUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io')) {
                     bookElement.addEventListener('click', () => loadBookIntoReader(book.id));
                 } else {
                     bookElement.style.cursor = 'not-allowed';
                     bookElement.title = "URL do arquivo .docx não configurada corretamente.";
-                    bookElement.addEventListener('click', () => showMessage('Livro Indisponível', `O arquivo para "${book.name}" não está configurado corretamente.`));
+                    bookElement.addEventListener('click', () => simpleUserFeedback('info', `O arquivo para "${book.name}" não está configurado corretamente.`));
                 }
                 bookShelf.appendChild(bookElement);
             });
         }
+        
+        // --- Gerenciamento de Progresso ---
+        function saveProgress() {
+            if (!currentLoadedBookId) return; 
+            const progress = { bookId: currentLoadedBookId, pageIndex: currentPageIndex, zoomLevel: currentZoomLevel };
+            localStorage.setItem('bibliotecaAndreProgress', JSON.stringify(progress));
+        }
 
-        async function loadBookIntoReader(bookId) {
+        function loadProgress() {
+            const savedProgressString = localStorage.getItem('bibliotecaAndreProgress');
+            if (savedProgressString) {
+                try {
+                    const savedProgress = JSON.parse(savedProgressString);
+                    if (savedProgress && savedProgress.bookId) {
+                        const bookToLoad = books.find(b => b.id === savedProgress.bookId);
+                        if (bookToLoad) {
+                            currentZoomLevel = savedProgress.zoomLevel || 100;
+                            // Chama loadBookIntoReader, que agora lida com initialPageIndex
+                            loadBookIntoReader(savedProgress.bookId, savedProgress.pageIndex); 
+                            return true; 
+                        } else { 
+                            console.warn("Livro salvo não encontrado na lista. Removendo progresso.");
+                            localStorage.removeItem('bibliotecaAndreProgress'); 
+                        }
+                    }
+                } catch (e) {
+                    console.error("Erro ao carregar progresso do localStorage:", e);
+                    localStorage.removeItem('bibliotecaAndreProgress'); // Limpa progresso inválido
+                }
+            }
+            return false; 
+        }
+
+        // --- Carregamento e Paginação do Livro ---
+        async function loadBookIntoReader(bookId, initialPageIndex = 0) {
             const book = books.find(b => b.id === bookId);
             if (!book) {
-                showMessage('Erro', 'Livro não encontrado.');
-                return;
+                simpleUserFeedback('error', 'Livro não encontrado.'); currentLoadedBookId = null; saveProgress(); return;
             }
             if (!book.fileUrl || book.fileUrl.startsWith('https://SEU_USUARIO_GITHUB.github.io')) {
-                showMessage('Erro', `URL do arquivo para "${book.name}" não configurada corretamente.`);
-                readerPageContent.innerHTML = '<p id="readerPlaceholder" class="text-slate-400 text-center">Selecione um livro da sua estante para ler.</p>';
-                currentBookTitle.textContent = "Leitor"; 
-                resetPagination();
-                return;
+                simpleUserFeedback('error', `URL para "${book.name}" não configurada.`);
+                readerPageContent.innerHTML = '<p id="readerPlaceholder" class="text-center placeholder-text">Selecione um livro.</p>';
+                currentBookTitle.textContent = "Leitor"; currentLoadedBookId = null; resetPagination(true); saveProgress(); return;
             }
 
+            currentLoadedBookId = book.id; 
             currentBookTitle.textContent = book.name;
             readerContentLoading.classList.remove('hidden');
             readerPageContent.innerHTML = ''; 
-            resetPagination();
+            resetPagination(true); // Passa true para indicar que é um carregamento de livro, não um reset simples
 
             try {
                 const response = await fetch(book.fileUrl);
-                if (!response.ok) throw new Error(`Falha ao buscar o arquivo: ${response.status} ${response.statusText}`);
+                if (!response.ok) throw new Error(`Falha ao buscar arquivo: ${response.status} ${response.statusText}`);
                 const arrayBuffer = await response.arrayBuffer();
                 const mammothResult = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
                 
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = mammothResult.value;
-
                 bookPages = []; 
                 let contentContainer = tempDiv;
-                if (tempDiv.children.length === 1 && tempDiv.firstElementChild.tagName === 'DIV') {
-                    if (tempDiv.firstElementChild.children.length > 0) {
-                       contentContainer = tempDiv.firstElementChild;
-                    }
+                // Tenta pegar o container principal do conteúdo se o mammoth o envolver
+                if (tempDiv.children.length === 1 && tempDiv.firstElementChild.tagName === 'DIV' && tempDiv.firstElementChild.children.length > 0) {
+                   contentContainer = tempDiv.firstElementChild;
                 }
                 const childNodes = Array.from(contentContainer.childNodes);
 
                 if (childNodes.length > 0) {
-                    let currentPageHtmlBuffer = '';
-                    let elementCountInCurrentPage = 0;
+                    let currentPageHtmlBuffer = ''; let elementCountInCurrentPage = 0;
                     const significantNodeTags = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'IMG', 'TABLE', 'UL', 'OL', 'PRE', 'HR'];
-
+                    
                     childNodes.forEach((node, index) => {
-                        let nodeHtml = '';
-                        let isSignificant = false;
-
+                        let nodeHtml = ''; let isSignificant = false;
                         if (node.nodeType === Node.ELEMENT_NODE) {
                             nodeHtml = node.outerHTML;
-                            if (significantNodeTags.includes(node.tagName)) {
-                                isSignificant = true;
-                            } else if (node.textContent.trim() !== '') { 
+                            if (significantNodeTags.includes(node.tagName) || (node.textContent && node.textContent.trim() !== '')) {
                                 isSignificant = true;
                             }
                         } else if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
@@ -373,101 +456,117 @@
                             isSignificant = true;
                         }
 
-                        if (isSignificant) {
-                            currentPageHtmlBuffer += nodeHtml;
-                            elementCountInCurrentPage++;
+                        if (isSignificant) { 
+                            currentPageHtmlBuffer += nodeHtml; 
+                            elementCountInCurrentPage++; 
                         }
 
                         if ((isSignificant && elementCountInCurrentPage >= ELEMENTS_PER_PAGE_TARGET) || index === childNodes.length - 1) {
                             if (currentPageHtmlBuffer.trim() !== '') {
-                                bookPages.push(currentPageHtmlBuffer);
-                                currentPageHtmlBuffer = '';
+                                bookPages.push(currentPageHtmlBuffer); 
+                                currentPageHtmlBuffer = ''; 
                                 elementCountInCurrentPage = 0;
                             }
                         }
                     });
-                    if (currentPageHtmlBuffer.trim() !== '') {
+                    if (currentPageHtmlBuffer.trim() !== '') { // Adiciona o buffer restante
                         bookPages.push(currentPageHtmlBuffer);
                     }
-
                 } else if (contentContainer.innerHTML.trim() !== '') { 
-                    bookPages.push(contentContainer.innerHTML);
+                    bookPages.push(contentContainer.innerHTML); // Fallback se não houver childNodes mas houver HTML
                 }
 
-
                 if (bookPages.length === 0) { 
-                    if (mammothResult.value.trim() !== '') {
-                        bookPages.push(mammothResult.value); 
-                    } else {
-                        bookPages.push('<p>Conteúdo do livro está vazio ou não pôde ser processado.</p>');
-                    }
+                    bookPages.push(mammothResult.value.trim() !== '' ? mammothResult.value : '<p>Conteúdo do livro está vazio ou não pôde ser processado.</p>');
                 }
                 
                 readerContentLoading.classList.add('hidden');
-                
                 if (bookPages.length > 0) {
-                    currentPageIndex = 0;
-                    renderCurrentPage();
+                    currentPageIndex = Math.max(0, Math.min(initialPageIndex, bookPages.length - 1)); 
+                    renderCurrentPage(true); // Passa true para carregamento inicial (sem fadeOut)
                 } else {
                     readerPageContent.innerHTML = '<p class="text-red-500 text-center">Não foi possível dividir o livro em páginas.</p>';
+                    updatePageIndicator(); updateNavigationButtons(); 
                 }
-                
-                applyZoom(); 
                 readerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             } catch (err) {
                 console.error("Erro ao carregar ou converter DOCX:", err);
-                showMessage('Erro de Carregamento', `Não foi possível carregar o livro. Detalhe: ${err.message}`);
+                simpleUserFeedback('error', `Não foi possível carregar o livro. Detalhe: ${err.message}`);
                 readerPageContent.innerHTML = `<p class="text-red-500 text-center">Erro ao carregar o conteúdo do livro.</p>`;
-                readerContentLoading.classList.add('hidden');
-                resetPagination();
+                readerContentLoading.classList.add('hidden'); 
+                currentLoadedBookId = null; 
+                resetPagination(true); 
+                saveProgress(); 
             }
         }
+        
+        function renderCurrentPage(isInitialLoad = false) {
+            const newHtml = (bookPages.length === 0 || currentPageIndex < 0 || currentPageIndex >= bookPages.length) ?
+                (bookPages.length === 0 && readerContentLoading.classList.contains('hidden') ? 
+                    '<p id="readerPlaceholder" class="text-center placeholder-text">Selecione um livro da sua estante para ler.</p>' :
+                    '<p id="readerPlaceholder" class="text-center placeholder-text">Fim do livro.</p>')
+                : bookPages[currentPageIndex];
 
-        function renderCurrentPage() {
-            if (bookPages.length === 0 || currentPageIndex < 0 || currentPageIndex >= bookPages.length) {
-                if (bookPages.length === 0 && readerContentLoading.classList.contains('hidden')) { 
-                     readerPageContent.innerHTML = '<p id="readerPlaceholder" class="text-slate-400 text-center">Selecione um livro da sua estante para ler.</p>';
-                } else if (bookPages.length > 0) {
-                     readerPageContent.innerHTML = '<p id="readerPlaceholder" class="text-slate-400 text-center">Fim do livro.</p>';
-                }
+            const actuallyUpdateContent = () => {
+                readerPageContent.innerHTML = newHtml;
+                readerPageContent.scrollTop = 0;
+                applyZoom(); // applyZoom chama saveProgress
                 updatePageIndicator();
                 updateNavigationButtons();
-                return;
+                
+                readerPageContent.classList.remove('page-fade-out');
+                readerPageContent.classList.add('page-fade-in');
+                
+                setTimeout(() => {
+                    readerPageContent.classList.remove('page-fade-in');
+                }, ANIMATION_DURATION_MS);
+            };
+
+            if (isInitialLoad || readerPageContent.innerHTML.includes('id="readerPlaceholder"')) {
+                // Se for carregamento inicial, ou se o conteúdo atual for o placeholder,
+                // atualiza diretamente e aplica fade-in.
+                actuallyUpdateContent();
+            } else {
+                // Se já houver conteúdo de página, aplica fade-out primeiro
+                readerPageContent.classList.add('page-fade-out');
+                setTimeout(() => {
+                    actuallyUpdateContent();
+                }, ANIMATION_DURATION_MS); 
             }
-            readerPageContent.innerHTML = bookPages[currentPageIndex];
-            readerPageContent.scrollTop = 0; 
-            applyZoom(); 
-            updatePageIndicator();
-            updateNavigationButtons();
         }
 
         function updatePageIndicator() {
-            if (bookPages.length > 0 && currentPageIndex < bookPages.length) { 
+            if (bookPages.length > 0 && currentPageIndex >= 0 && currentPageIndex < bookPages.length) { 
                 pageIndicator.textContent = `Página ${currentPageIndex + 1} de ${bookPages.length}`;
-            } else {
-                pageIndicator.textContent = 'Página - de -';
+            } else { 
+                pageIndicator.textContent = 'Página - de -'; 
             }
         }
 
         function updateNavigationButtons() {
-            prevPageButton.disabled = (currentPageIndex <= 0);
+            prevPageButton.disabled = (currentPageIndex <= 0 || bookPages.length === 0);
             nextPageButton.disabled = (currentPageIndex >= bookPages.length - 1 || bookPages.length === 0);
-             if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
+             if (typeof lucide !== 'undefined' && lucide.createIcons) {
                 lucide.createIcons(); 
             }
         }
         
-        function resetPagination(){
-            bookPages = [];
+        function resetPagination(isBookLoad = false){ // Adicionado parâmetro
+            bookPages = []; 
             currentPageIndex = 0;
-            renderCurrentPage(); 
+            if (!isBookLoad) { // Só reseta o ID do livro se não for um carregamento de livro
+                currentLoadedBookId = null;
+            }
+            renderCurrentPage(true); // Passa true para evitar fadeOut inicial
         }
 
+        // --- Event Listeners para Navegação e Zoom ---
         prevPageButton.addEventListener('click', () => {
             if (currentPageIndex > 0) {
                 currentPageIndex--;
                 renderCurrentPage();
+                // saveProgress() é chamado por applyZoom, que é chamado por renderCurrentPage
             }
         });
 
@@ -475,6 +574,7 @@
             if (currentPageIndex < bookPages.length - 1) {
                 currentPageIndex++;
                 renderCurrentPage();
+                // saveProgress() é chamado por applyZoom
             }
         });
 
@@ -482,32 +582,36 @@
             bookShelfSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
-
         function applyZoom() {
             readerPageContent.style.fontSize = `${currentZoomLevel}%`;
+            saveProgress(); // Salva o zoom e a página atual
         }
 
         zoomInButton.addEventListener('click', () => {
-            if (currentZoomLevel < MAX_ZOOM) {
-                currentZoomLevel += ZOOM_STEP;
-                applyZoom();
+            if (currentZoomLevel < MAX_ZOOM) { 
+                currentZoomLevel += ZOOM_STEP; 
+                applyZoom(); 
             }
         });
         zoomOutButton.addEventListener('click', () => {
-            if (currentZoomLevel > MIN_ZOOM) {
-                currentZoomLevel -= ZOOM_STEP;
-                applyZoom();
+            if (currentZoomLevel > MIN_ZOOM) { 
+                currentZoomLevel -= ZOOM_STEP; 
+                applyZoom(); 
             }
         });
 
+        // --- Inicialização ---
         document.addEventListener('DOMContentLoaded', () => {
-            if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
+            loadTheme(); 
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
                 lucide.createIcons(); 
             } else {
                 console.error('Lucide library not available.');
             }
             renderBookShelf(); 
-            resetPagination(); 
+            if (!loadProgress()) { // Tenta carregar o progresso salvo
+                resetPagination(true); // Se não houver progresso, reseta para o estado inicial
+            }
         });
     </script>
 </body>
